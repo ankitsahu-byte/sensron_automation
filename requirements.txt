@@ -1,0 +1,7 @@
+pytest
+playwright
+pytest-playwright
+pytest-html
+python-dotenv
+requests
+pytest-order
