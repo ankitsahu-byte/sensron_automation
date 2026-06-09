@@ -1,7 +1,8 @@
 from pages.base_page import BasePage
+from playwright.sync_api import Page
 
 class LoginPage(BasePage):
-    def __init__(self, page):
+    def __init__(self, page: Page):
         super().__init__(page)
         self.url = "/login"
         
@@ -15,7 +16,8 @@ class LoginPage(BasePage):
         self.password_required_error = page.get_by_text("Password is required", exact=True)
 
     def go_to_login(self, base_url: str):
-        self.navigate(f"{base_url}{self.url}")
+       clean_url = f"{base_url.rstrip('/')}{self.url}"
+       self.navigate(clean_url)
 
     def login(self, email, password):
         self.email_input.fill(email)

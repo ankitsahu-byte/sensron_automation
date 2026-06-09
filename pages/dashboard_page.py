@@ -42,11 +42,11 @@ class DashboardPage(BasePage):
         return self.page.locator(f"a[href='{route}']")
 
     def open_zones_panel(self):
-        self.zones_btn.wait_for(state="visible")
+        #self.zones_btn.wait_for(state="visible")
         self.zones_btn.click()
 
     def open_cameras_panel(self):
-        self.cameras_btn.wait_for(state="visible")
+        #self.cameras_btn.wait_for(state="visible")
         self.cameras_btn.click()
 
     def get_exact_text_element(self, text: str):
@@ -54,32 +54,33 @@ class DashboardPage(BasePage):
 
     def apply_high_severity_filter(self):
         self.alerts_btn.click()
-        self.filter_btn.wait_for(state="visible")
+        #self.filter_btn.wait_for(state="visible")
         self.filter_btn.click()
         
-        self.severity_btn.wait_for(state="visible")
+        #self.severity_btn.wait_for(state="visible")
         self.severity_btn.click()
         
-        self.high_option.wait_for(state="visible")
+        #self.high_option.wait_for(state="visible")
         self.high_option.click()
         
         self.apply_btn.click()
 
     def clear_filters(self):
+        #self.filter_btn.wait_for(state="visible")
         self.filter_btn.click()
-        self.clear_btn.wait_for(state="visible")
+        #self.clear_btn.wait_for(state="visible")
         self.clear_btn.click()
 
     def toggle_fullscreen(self, enter: bool = True):
         if enter:
-            self.fullscreen_btn.wait_for(state="visible")
+            #self.fullscreen_btn.wait_for(state="visible")
             self.fullscreen_btn.click()
         else:
-            self.minimize_btn.wait_for(state="visible")
+            #self.minimize_btn.wait_for(state="visible")
             self.minimize_btn.click()
 
     def open_summary_popup(self):
-        self.summary_popup_btn.wait_for(state="visible", timeout=5000)
+        #self.summary_popup_btn.wait_for(state="visible", timeout=5000)
         self.summary_popup_btn.click()
 
     def select_summary_option(self, option_text: str):
