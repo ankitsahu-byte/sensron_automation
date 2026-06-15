@@ -13,7 +13,13 @@ For htmlReport creation
 pytest tests/ui/test_01_login.py --html=reports/html/login_report.html --self-contained-html
 pytest tests/ui/test_02_dashboard.py --html=reports/dashboard_report.html --self-contained-html
 pytest tests/ui --html=reports/html/results.html --self-contained-html
+pytest tests/ui/test_network_config.py --html=reports/html/network_config.html -v -s
+
 
 For htmlReport creation
 ------------------------
 pytest tests/ui --junitxml=reports/xml/results.xml
+
+To find the locator
+------------------
+playwright codegen http://10.101.54.90:4200/home/dashboard

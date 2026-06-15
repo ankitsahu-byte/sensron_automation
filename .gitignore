@@ -163,3 +163,5 @@ artifacts/*
 satenv
 reports/*
 codetest.py
+bug.txt
+my_notes/*
