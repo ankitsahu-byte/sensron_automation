@@ -14,7 +14,8 @@ pytest tests/ui/test_01_login.py --html=reports/html/login_report.html --self-co
 pytest tests/ui/test_02_dashboard.py --html=reports/dashboard_report.html --self-contained-html
 pytest tests/ui --html=reports/html/results.html --self-contained-html
 pytest tests/ui/test_network_config.py --html=reports/html/network_config.html -v -s
-
+pytest tests/ui/test_das_interrogator_page.py -v -s
+pytest tests/ui/test_das_interrogator_page.py --html=reports/html/das_interrogator_report.html -v -s
 
 For htmlReport creation
 ------------------------

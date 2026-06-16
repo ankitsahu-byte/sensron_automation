@@ -5,6 +5,7 @@ from pages.dashboard_page import DashboardPage
 from pages.navigation_menu import NavigationMenu
 from pages.network_config_page import NetworkConfigPage
 from utils.config_reader import Config
+from pages.das_interrogator_page import DasInterrogatorPage
 
 config = Config()   
 @pytest.fixture
@@ -63,4 +64,28 @@ def network_config_setup(browser):
     yield config_pg
     
     # 6. Teardown: Close context after all tests in the module finish
+    context.close()
+
+
+@pytest.fixture(scope="module")
+def das_interrogator_setup(browser):
+    """Logs in, navigates to DAS Interrogator, and yields the page object."""
+    context = browser.new_context()
+    page = context.new_page()
+    
+    login_pg = LoginPage(page)
+    nav_menu = NavigationMenu(page)
+    das_pg = DasInterrogatorPage(page)
+    
+    # Login
+    login_pg.navigate(Config.BASE_URL)
+    login_pg.login(Config.EMAIL, Config.PASSWORD)
+    page.wait_for_url(lambda url: "dashboard" in url, timeout=10000)
+    
+    # Navigate to Configuration -> DAS Interrogator
+    nav_menu.go_to_configuration()
+    das_pg.open_das_interrogator()
+    
+    yield das_pg
+    
     context.close()
