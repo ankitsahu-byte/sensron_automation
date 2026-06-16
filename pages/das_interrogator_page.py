@@ -96,4 +96,14 @@ class DasInterrogatorPage:
         input_el.fill(value)
         input_el.blur()
 
+    # 6. Pulse number
+    def enter_pulse_number(self, value: str):
+        input_el = self._get_number_input("Pulse Number")
+        input_el.wait_for(state="visible")
+        input_el.click()
+        input_el.clear()
+        input_el.fill(str(value))
+        input_el.blur()
+
+
     

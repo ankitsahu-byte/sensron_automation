@@ -224,7 +224,7 @@ def run_tests():
         ]
         # Loop through the cases testing each boundary completely
         for value, is_valid, expected_error in boundary_test_cases:
-            print(f"Setti\n--- Testing boundary value: {value} ---")
+            print(f"Setti\--- Testing boundary value: {value} ---")
             
             # 1. Start the cycle: Click Edit
             edit_button = page.get_by_role("button", name="Edit")

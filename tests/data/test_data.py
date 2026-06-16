@@ -29,8 +29,8 @@ class DasInterrogatorData:
           ("-1", False, "Pulse Frequency must be between 100 and 100000 Hz"),
           ("0", True, None),#Pulse Frequency must be between 100 and 100000 Hz
           ("1200", True, None),
-          ("2441.40625", True, None),#Pulse Frequency must be less than 2441.41 Hz for the current Resolution and Sample Number
-          ("2442", False, "Pulse Frequency must be less than 2441.41 Hz for the current Resolution and Sample Number")
+          ("1907.38", True, None),#Pulse Frequency must be less than 2441.41 Hz for the current Resolution and Sample Number
+          ("1908", False, "Pulse Frequency must be less than 1907.38 Hz for the current Resolution and Sample Numbe")
     ]
 
     DAQ_SAMPLE_NUMBER = [
@@ -39,4 +39,13 @@ class DasInterrogatorData:
           ("256", True, None),
           ("65536", True, None),
           ("65537", False, "Sample Number must not exceed 65536")
+    ]
+
+    DAQ_PULSE_NUMBER = [
+        (9, False, "Pulse Number must be at least 10"),       
+        (101, False, "Pulse Number must not exceed 100"),       
+        (-1, False, "Pulse Number must be at least 10"),  
+        (10, True, None),                              
+        (55, True, None),                              
+        (100, True, None),
     ]
