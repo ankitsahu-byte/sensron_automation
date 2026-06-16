@@ -60,7 +60,7 @@ class DasInterrogatorPage:
     def get_pulse_edfa_value(self) -> str:
         return self._get_number_input("Pulse EDFA Current Reading Value").input_value()
 
-    # 2. Pulse Frequency (Based on your earlier screenshot)
+    # 2. Pulse Frequency 
     def enter_voa_voltage(self, value: str):
         input_el = self._get_number_input("VOA Voltage Value")
         input_el.wait_for(state="visible")
@@ -69,7 +69,7 @@ class DasInterrogatorPage:
         input_el.fill(str(value))
         input_el.blur()
 
-    # 3. Pulse Width (Based on your earlier screenshot)
+    # 3. Pulse Width 
     def enter_pulse_width(self, value: str):
         input_el = self._get_number_input("Pulse Width")
         input_el.wait_for(state="visible")
@@ -78,11 +78,22 @@ class DasInterrogatorPage:
         input_el.fill(str(value))
         input_el.blur()
         
-    # 4. Resolution (Based on your earlier screenshot)
-    def enter_sample_number(self, value: str):
+    # 4. Resolution 
+    def enter_pulse_frequency(self, value: str):
         input_el = self._get_number_input("Pulse Frequency")
         input_el.wait_for(state="visible")
         input_el.click()
         input_el.clear()
         input_el.fill(str(value))
         input_el.blur()
+    
+    # 5. Sample Number
+    def enter_sample_number(self, value: str):
+        input_el = self._get_number_input("Sample Number")
+        input_el.wait_for(state="visible")
+        input_el.click()
+        input_el.clear()
+        input_el.fill(value)
+        input_el.blur()
+
+    
