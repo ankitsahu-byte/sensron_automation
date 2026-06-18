@@ -6,6 +6,8 @@ from pages.navigation_menu import NavigationMenu
 from pages.network_config_page import NetworkConfigPage
 from utils.config_reader import Config
 from pages.das_interrogator_page import DasInterrogatorPage
+from pages.configuration_database_page import DatabasePage
+
 
 config = Config()   
 @pytest.fixture
@@ -87,5 +89,29 @@ def das_interrogator_setup(browser):
     das_pg.open_das_interrogator()
     
     yield das_pg
+    
+    context.close()
+
+
+@pytest.fixture(scope="module")
+def database_setup(browser):
+    """Logs in, navigates to Database config, and yields the page object."""
+    context = browser.new_context()
+    page = context.new_page()
+    
+    login_pg = LoginPage(page)
+    nav_menu = NavigationMenu(page)
+    db_pg = DatabasePage(page)
+    
+    # Login
+    login_pg.navigate(Config.BASE_URL)
+    login_pg.login(Config.EMAIL, Config.PASSWORD)
+    page.wait_for_url(lambda url: "dashboard" in url, timeout=10000)
+    
+    # Navigate to Configuration -> Database
+    nav_menu.go_to_configuration()
+    db_pg.navigate_to_database()
+    
+    yield db_pg
     
     context.close()

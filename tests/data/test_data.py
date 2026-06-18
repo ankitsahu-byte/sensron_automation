@@ -50,3 +50,13 @@ class DasInterrogatorData:
         (55, True, None),                              
         (100, True, None),
     ]
+
+class DatabaseData:
+    DATABASE_DATA = [
+        ("Username", "Username is required"),
+        ("Password", "Password is required"),
+        ("Database", "Database is required"),
+        # ("Port", "Port is required"), # Kept commented out as requested
+        ("Host", "Host is required"),
+        ("postgres", "Dialect is required")
+    ]
