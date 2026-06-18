@@ -152,3 +152,36 @@ def test_pulse_number_accepts_only_valid_ranges(das_interrogator_setup: DasInter
         if das_page.dismiss_button.is_visible():
             das_page.click_dismiss()
         expect(das_page.edit_button).to_be_visible()
+
+# dropdown test case
+def test_resolution_dropdown_dynamically(das_interrogator_setup: DasInterrogatorPage):
+    das_page: DasInterrogatorPage = das_interrogator_setup
+
+    # 1. Enter edit mode
+    das_page.click_edit()
+
+    # 2. Use the POM to scrape the options dynamically
+    # Change "Resolution" to whatever dropdown you want to test!
+    available_options = das_page.get_dropdown_options("Resolution")
+    total_options = len(available_options)
+    print(f"Total options found: {total_options}")
+
+    # 3. The Test Loop
+    for index, option_text in enumerate(available_options):
+        print(f"Testing Option [{index + 1}/{total_options}]: {option_text}")
+        
+        # Use the POM to click the dropdown and select the current loop item
+        das_page.select_dropdown_option("Resolution", option_text)
+        
+        # If it is the VERY LAST option in the list
+        if index == total_options - 1:
+            print("Last option reached. Clicking 'Dismiss Changes'.")
+            if das_page.dismiss_button.is_visible():
+                das_page.click_dismiss()
+                
+        # For ALL OTHER options in the list
+        else:
+            pass
+
+    # 4. Final safety assertion
+    expect(das_page.edit_button).to_be_visible()

@@ -1,5 +1,6 @@
 import pytest
 from playwright.sync_api import Page, sync_playwright, expect
+import time
 
 BASE_URL = "http://10.101.54.90:4200/home/dashboard"
 EMAIL = "ankit.sahu@stltech.in"
@@ -28,13 +29,64 @@ def run_tests():
         # Click the configuration link
         page.get_by_role("link", name="Configuration").click()
         print("Configuration link is clicked.")
+        time.sleep(1)
 
-        # Click the DAS Interrogator radio option
+        # Click the DAS Interrogator link)
+
         page.get_by_role("radio", name="DAS Interrogator").click()
-        print("DAS Interrogator link is clicked.")       
+        print("DAS Interrogator link is clicked.")
+        time.sleep(1)
+
+
+        # 1. Click Edit
+        edit_button = page.get_by_role("button", name="Edit")
+        edit_button.click()
+        print("Edit button is clicked.")
+
+        # 2. Fix the Timeout: Use the Angular wrapper strategy to find the dropdown
+        select_resolution = page.locator("div.field-wrapper").filter(has_text="Resolution")
+        select_resolution.wait_for(state="visible")
+        select_resolution.locator("mat-select").click()
+
+        # 3. Scrape the options
+        available_options = page.get_by_role("option").all_inner_texts()
+        print(f"Found options: {available_options}")
+        page.keyboard.press("Escape")
+        total_options = len(available_options)
+        print(f"Total options: {total_options}")
+        # 4. The Loop
+        for index, option_text in enumerate(available_options):
+            print(f"Testing Resolution [{index + 1}/{total_options}]: {option_text}")
+            
+            # Re-open the dropdown
+            select_resolution.click()
+            
+            # Click the specific option dynamically
+            page.get_by_role("option", name=option_text, exact=True).click()
+            if index == total_options - 1:
+                print("Last option reached. Clicking 'Dismiss Changes'.")
+                
+                # Locate and click the dismiss button
+                dismiss_button = page.get_by_role("button", name="Dismiss Changes")
+                if dismiss_button.is_visible():
+                    dismiss_button.click()
+            
+            # # Save and verify
+            # save_button = page.get_by_role("button", name="Save Changes")
+            # expect(save_button).to_be_enabled()
+            # save_button.click()
+            
+            # # Wait for edit button to return, then click it to prepare for the next loop item
+            # expect(edit_button).to_be_visible()
+            # edit_button.click()
+        # code for click the click last option and then click the Dismiss Change
+
+
+
+
 #--------------------------------------------------------------------------
 
-        # EDFA Details check the boundary values of Pulse EDFA Current reading value(mA)
+    ''' # EDFA Details check the boundary values of Pulse EDFA Current reading value(mA)
         boundary_test_cases = [
           ("-1", False, "Pulse EDFA Current Reading must be at least 0 mA"), 
           ("0", True, None),      
@@ -94,7 +146,7 @@ def run_tests():
                 expect(edit_button).to_be_visible()
                 print(f"Passed: Invalid input '{value}' is rejected. Changes dismissed.")
 #-------------------------------------------------------------------------------------------------
-       ''' # VOA Detaisls
+        # VOA Detaisls
         boundary_test_cases = [
           ("-1", False, "VOA Voltage Value must be at least 0 V"), 
           ("0", True, None),                                            

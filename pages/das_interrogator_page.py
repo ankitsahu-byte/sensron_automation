@@ -106,4 +106,33 @@ class DasInterrogatorPage:
         input_el.blur()
 
 
-    
+    # --- Dynamic Dropdown Methods ---
+
+    def get_dropdown_options(self, field_label: str) -> list[str]:
+        """
+        Temporarily opens a dropdown just to scrape and return all available options.
+        """
+        # Find the dropdown mat-select inside the wrapper
+        dropdown = self.page.locator("div.field-wrapper").filter(has_text=field_label).locator("mat-select")
+        dropdown.wait_for(state="visible")
+        dropdown.click()
+        
+        # Scrape all inner texts into a Python list
+        options = self.page.get_by_role("option").all_inner_texts()
+        
+        # Close the menu without selecting anything
+        self.page.keyboard.press("Escape")
+        return options
+
+    def select_dropdown_option(self, field_label: str, option_text: str):
+        """
+        Opens a specific dropdown and clicks the provided option text.
+        """
+        dropdown = self.page.locator("div.field-wrapper").filter(has_text=field_label).locator("mat-select")
+        dropdown.wait_for(state="visible")
+        dropdown.click()
+        
+        # Select the specific option
+        target_option = self.page.get_by_role("option", name=option_text, exact=True)
+        target_option.wait_for(state="visible")
+        target_option.click()
