@@ -9,6 +9,7 @@ from pages.das_interrogator_page import DasInterrogatorPage
 from pages.configuration_database_page import DatabasePage
 from pages.configuration_anomoly_server_page import AnomalyServerPage
 from pages.configuration_monitering_server_page import MoniteringServerPage
+from pages.configuration_anomaly_page import AnomalyPage
 
 
 config = Config()   
@@ -161,5 +162,27 @@ def monitering_server_setup(browser):
     anomaly_pg.navigate_to_anomaly_server()
     
     yield anomaly_pg
+    
+    context.close()
+@pytest.fixture(scope='module')
+def anomaly_setup(browser):
+    """Logs in, navigates to DAS Interrogator, and yields the page object."""
+    context = browser.new_context()
+    page = context.new_page()
+    
+    login_pg = LoginPage(page)
+    nav_menu = NavigationMenu(page)
+    ano_pg = AnomalyPage(page)
+    
+    # Login
+    login_pg.navigate(Config.BASE_URL)
+    login_pg.login(Config.EMAIL, Config.PASSWORD)
+    page.wait_for_url(lambda url: "dashboard" in url, timeout=10000)
+    
+    # Navigate to Configuration -> DAS Interrogator
+    nav_menu.go_to_configuration()
+    ano_pg.open_anomoly()
+    
+    yield ano_pg
     
     context.close()

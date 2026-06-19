@@ -74,3 +74,43 @@ class MoniteringServerData:
         ("Group id", "Group id is required"),
         ("Host", "Host is required")
     ]
+
+class AnomalyData:
+    LOCTION_OFFSET_DATA=[
+          (-40001, False, "Value must be at least -40000"), 
+          (-40000, True, None),          
+          (40000, True, None),
+          (0, True, None),
+          (40001, False, "Value must be between -40000 and 40000")
+    ]
+
+    PROCESS_ANOMALY_INTERVAL_DATA =[
+          ("999", False, "Value must be at least 1000"), 
+          ("1000", True, None),                                            
+          ("30000", True, None),                                         
+          ("60000", True, None),
+          ("1300", True, None),                                        
+          ("60001", False, "Value must be between 1000 and 60000")
+    ]
+
+    MAX_ANOMALY_LIMIT_DATA =[
+          ("9", False, "Value must be at least 10"),
+          ("10", True, None),
+          ("1000", True, None),
+          ("1001", False, "Value must be between 10 and 1000")
+    ]
+
+    SYSTEM_IDLE_TIME_THRESOLD_DATA =[
+          ("-1", False, "The Minimum value is greater than 1"),
+          ("0", False, "The Minimum value is greater than 1"),
+          ("300", True, None),
+          ("1", True, None),
+          ("301", False, "Value must be between 1 and 300")
+    ]
+
+    AUOT_ACT_TIMEOUT_DATA = [
+          ("0", False, "The Minimum value is greater than 1"),
+          ("1440", True, None),
+          ("10", True, None),
+          ("1441", False, "Value must be between 1 and 1440")
+    ]

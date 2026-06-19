@@ -18,6 +18,7 @@ pytest tests/ui/test_das_interrogator_page.py -v -s
 pytest tests/ui/test_configuration_database_page.py -v -s
 pytest tests/ui/test_configuration_anomoly_server_page.py -v -s
 pytest tests/ui/test_configuration_monitering_server_page.py -v -s
+pytest tests/ui/test_configuration_anomaly_page.py -v -s
 pytest tests/ui/test_das_interrogator_page.py --html=reports/html/das_interrogator_report.html -v -s
 
 For htmlReport creation
