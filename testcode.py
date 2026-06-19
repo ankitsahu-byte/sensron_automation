@@ -36,8 +36,8 @@ def run_tests():
 
         # --- 1. NAVIGATE TO DATABASE TAB ---
         # Note: The UI has an asterisk "Database*" so we use a partial match locator
-        page.get_by_role("radio", name="Database*").click()
-        print("Database* link is clicked.")
+        page.get_by_role("radio", name="Monitoring Server*").click()
+        print("Monitoring Server* link is clicked.")
         time.sleep(1)
 
         # --- 3. THE CONTINUOUS LOOP TEST LOGIC ---
@@ -49,12 +49,9 @@ def run_tests():
         
         # Define the fields and the exact error we expect to see
         fields_to_test = [
-            ("Username", "Username is required"),
-            ("Password", "Password is required"),
-            ("Database", "Database is required"),
-            #("Port", "Port is required"),
-            ("Host", "Host is required"),
-            ("postgres", "Dialect is required")
+            ("Topic", "Topic is required"),
+            ("Group id", "Group id is required"),
+            ("Host", "Host is required")
         ]
 
         save_button = page.get_by_role("button", name="Save Changes")

@@ -60,3 +60,10 @@ class DatabaseData:
         ("Host", "Host is required"),
         ("postgres", "Dialect is required")
     ]
+
+class AnomalyServerData:
+    ANOMOLY_SERVER_DATA = [
+        ("Topic", "Topic is required"),
+        ("Group id", "Group id is required"),
+        ("Host", "Host is required")
+    ]
