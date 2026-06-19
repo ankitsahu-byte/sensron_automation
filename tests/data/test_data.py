@@ -67,3 +67,10 @@ class AnomalyServerData:
         ("Group id", "Group id is required"),
         ("Host", "Host is required")
     ]
+
+class MoniteringServerData:
+    MONITERING_SERVER_DATA = [
+        ("Topic", "Topic is required"),
+        ("Group id", "Group id is required"),
+        ("Host", "Host is required")
+    ]

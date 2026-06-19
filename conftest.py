@@ -8,6 +8,7 @@ from utils.config_reader import Config
 from pages.das_interrogator_page import DasInterrogatorPage
 from pages.configuration_database_page import DatabasePage
 from pages.configuration_anomoly_server_page import AnomalyServerPage
+from pages.configuration_monitering_server_page import MoniteringServerPage
 
 
 config = Config()   
@@ -119,6 +120,29 @@ def database_setup(browser):
 
 @pytest.fixture(scope="module")
 def anomaly_server_setup(browser):
+    """Logs in, navigates to Anomaly Server config, and yields the page object."""
+    context = browser.new_context()
+    page = context.new_page()
+    
+    login_pg = LoginPage(page)
+    nav_menu = NavigationMenu(page)
+    anomaly_pg = AnomalyServerPage(page)
+    
+    # Login
+    login_pg.navigate(Config.BASE_URL)
+    login_pg.login(Config.EMAIL, Config.PASSWORD)
+    page.wait_for_url(lambda url: "dashboard" in url, timeout=10000)
+    
+    # Navigate to Configuration -> Anomaly Server
+    nav_menu.go_to_configuration()
+    anomaly_pg.navigate_to_anomaly_server()
+    
+    yield anomaly_pg
+    
+    context.close()
+
+@pytest.fixture(scope="module")
+def monitering_server_setup(browser):
     """Logs in, navigates to Anomaly Server config, and yields the page object."""
     context = browser.new_context()
     page = context.new_page()
