@@ -114,3 +114,23 @@ class AnomalyData:
           ("10", True, None),
           ("1441", False, "Value must be between 1 and 1440")
     ]
+
+class MapData:
+    HIGH_PROXIMITY_THRESHOLD_DATA = [
+          (-1, False, "Value must be greater than or equal to 0"),        
+          (1, True, None),
+          (0,True, None)
+
+        ]
+    HIGHER_CONFIDENCE_THRESHOLD_DATA = [
+          (-1, False, "Value must be greater than or equal to 0"),        
+          (1, True, None),
+          (0,True, None)
+    ]
+    
+    MAP_TOGGLES = [
+        "Enable Offline Map",
+        "Allow Look Forward",
+        "kilometer Marker",
+        "Merge Type"
+    ]

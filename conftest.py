@@ -10,6 +10,7 @@ from pages.configuration_database_page import DatabasePage
 from pages.configuration_anomoly_server_page import AnomalyServerPage
 from pages.configuration_monitering_server_page import MoniteringServerPage
 from pages.configuration_anomaly_page import AnomalyPage
+from pages.configuration_map_page import MapPage
 
 
 config = Config()   
@@ -184,5 +185,27 @@ def anomaly_setup(browser):
     ano_pg.open_anomoly()
     
     yield ano_pg
+    
+    context.close()
+
+
+@pytest.fixture(scope='module')
+def map_setup(browser):
+    """Logs in, navigates to Configuration, opens Map tab, and yields the page object."""
+    context = browser.new_context()
+    page = context.new_page()
+    
+    login_pg = LoginPage(page)
+    nav_menu = NavigationMenu(page)
+    map_pg = MapPage(page)
+    
+    login_pg.navigate(Config.BASE_URL)
+    login_pg.login(Config.EMAIL, Config.PASSWORD)
+    page.wait_for_url(lambda url: "dashboard" in url, timeout=10000)
+    
+    nav_menu.go_to_configuration()
+    map_pg.open_map()
+    
+    yield map_pg
     
     context.close()
