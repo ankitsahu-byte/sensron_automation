@@ -134,3 +134,17 @@ class MapData:
         "kilometer Marker",
         "Merge Type"
     ]
+
+class RbacData:
+    SESSION_TIME_DATA = [
+        ("0", False, "The Minimum value is greater than 1"),   
+        ("1", True, None),                          
+        ("1440", True, None),                          
+        ("60", True, None),                        
+        ("1441", False, "Value must be between 1 and 1440"),  
+        ("-10", False, "The Minimum value is greater than 1"),  
+    ]
+
+    RBAC_TOGGLES = [
+        "Session Time Out"
+    ]

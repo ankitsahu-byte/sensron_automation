@@ -11,6 +11,7 @@ from pages.configuration_anomoly_server_page import AnomalyServerPage
 from pages.configuration_monitering_server_page import MoniteringServerPage
 from pages.configuration_anomaly_page import AnomalyPage
 from pages.configuration_map_page import MapPage
+from pages.configuration_rbac_controllor import RbacPage
 
 
 config = Config()   
@@ -207,5 +208,29 @@ def map_setup(browser):
     map_pg.open_map()
     
     yield map_pg
+    
+    context.close()
+
+
+@pytest.fixture(scope='module')
+def rbac_setup(browser):
+    """Logs in, navigates to Configuration, opens RBAC tab, and yields the page object."""
+    context = browser.new_context()
+    page = context.new_page()
+    
+    login_pg = LoginPage(page)
+    nav_menu = NavigationMenu(page)
+    rbac_pg = RbacPage(page)
+    
+    # Login
+    login_pg.navigate(Config.BASE_URL)
+    login_pg.login(Config.EMAIL, Config.PASSWORD)
+    page.wait_for_url(lambda url: "dashboard" in url, timeout=10000)
+    
+    # Navigate to Configuration -> RBAC Control
+    nav_menu.go_to_configuration()
+    rbac_pg.open_rbac()
+    
+    yield rbac_pg
     
     context.close()

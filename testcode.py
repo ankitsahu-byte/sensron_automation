@@ -33,17 +33,20 @@ def run_tests():
         time.sleep(1)
 
         # Click the Anomaly link (Adapted for the new page)
-        page.get_by_role("radio", name="Map").click()
-        print("Map tab is clicked.")
+        page.get_by_role("radio", name="RBAC Control").click()
+        print("RBAC Control tab is clicked.")
         time.sleep(1)
         #----------------------------------------------------------
-        # High Proximity Threshold
-        High_Proximity_Threshold = [
-          (-1, False, "Value must be greater than or equal to 0"),        
-          (1, True, None),
-          (0,True, None)
+        # Session Time (minutes)
+        SESSION_TIME_BVA_DATA = [
+          ("0", False, "The Minimum value is greater than 1"),   
+          ("1", True, None),                          
+          ("1440", True, None),                          
+          ("60", True, None),                        
+          ("1441", False, "Value must be between 1 and 1440"),  
+          ("-10", False, "The Minimum value is greater than 1"),  
         ]
-        for value, is_valid, expected_error in High_Proximity_Threshold:
+        for value, is_valid, expected_error in SESSION_TIME_BVA_DATA:
             print(f"\n--- Testing Location offset boundary value: {value} ---")
             
             edit_button = page.get_by_role("button", name="Edit")
@@ -51,7 +54,7 @@ def run_tests():
                 edit_button.click()
             
             # Using your wrapper strategy adapted for the Anomaly page
-            target_wrapper = page.locator("div.field-wrapper").filter(has_text="High Proximity Threshold")
+            target_wrapper = page.locator("div.field-wrapper").filter(has_text="Session Time (minutes)")
             target_input = target_wrapper.locator("input[type='number'], input[type='text']")
             target_input.wait_for(state="visible")
             
@@ -81,50 +84,6 @@ def run_tests():
                 page.get_by_role("button", name="Dismiss Changes").click()
                 expect(edit_button).to_be_visible()
                 print(f"Passed: Invalid input '{value}' is rejected. Changes dismissed.")
-        #---------------------------------------------------------------------------------------
-        # Higher Confidence Threshold
-        Higher_Confidence_Threshold = [
-          (-1, False, "Value must be greater than or equal to 0"),        
-          (1, True, None),
-          (0,True, None)
-        ]
-        for value, is_valid, expected_error in Higher_Confidence_Threshold:
-            print(f"\n--- Testing Location offset boundary value: {value} ---")
-            
-            edit_button = page.get_by_role("button", name="Edit")
-            if edit_button.is_visible():
-                edit_button.click()
-            
-            # Using your wrapper strategy adapted for the Anomaly page
-            target_wrapper = page.locator("div.field-wrapper").filter(has_text="Higher Confidence Threshold")
-            target_input = target_wrapper.locator("input[type='number'], input[type='text']")
-            target_input.wait_for(state="visible")
-            
-            target_input.click()
-            target_input.clear()
-            target_input.fill(str(value))
-            target_input.blur() 
-            
-            save_button = page.get_by_role("button", name="Save Changes")
-            
-            if is_valid:
-                print(f"Valid value '{value}' entered. Executing TRUE flow.")
-                expect(save_button).to_be_enabled()
-                save_button.click()
-                expect(edit_button).to_be_visible()
-                print(f"Passed: Valid input '{value}' is accepted. Saved successfully.")
-            else:
-                print(f"Invalid value '{value}' entered. Executing FALSE flow.")
-                
-                # Check for error message
-                error_msg = page.locator("div.field-error-message").filter(has_text=expected_error)
-                expect(error_msg).to_be_visible()
-                print(f"Expected error caught: '{expected_error}'")
-                
-                page.get_by_role("button", name="Dismiss Changes").click()
-                expect(edit_button).to_be_visible()
-                print(f"Passed: Invalid input '{value}' is rejected. Changes dismissed.")
-
             #---------------------------------------------------------------------------------------
              # Map Configuration Toggles (Explicit Definitions)
             print("\n--- Testing Map Toggles ---")
@@ -136,47 +95,14 @@ def run_tests():
             page.wait_for_timeout(500) # Brief pause for UI transition
         
         # 1. Enable Offline Map Toggle
-            print("Interacting with toggle: Enable Offline Map")
-            offline_wrapper = page.locator("div.toggle-field-wrapper").filter(has_text="Enable Offline Map")
+            print("Interacting with toggle: Session Time Out")
+            offline_wrapper = page.locator("div.toggle-field-wrapper").filter(has_text="Session Time Out")
             offline_map_toggle = offline_wrapper.locator("button[role='switch']")
         
         # Ensure it's ready before clicking
             offline_map_toggle.wait_for(state="visible")
             offline_map_toggle.dblclick()
             print("sucess")
-# 2. Allow Look Forward Toggle
-            print("Interacting with toggle: Allow Look Forward")
-            look_forward_wrapper = page.locator("div.toggle-field-wrapper").filter(has_text="Allow Look Forward")
-            look_forward_toggle = look_forward_wrapper.locator("button[role='switch']")
-            
-            look_forward_toggle.wait_for(state="visible")
-            look_forward_toggle.dblclick()
-            print("Allow Look Forward toggle success")
-            page.wait_for_timeout(500) # Optional: slight pause for UI stability
-
-
-            # 3. kilometer Marker Toggle
-            # Note: Using exact case from your UI screenshot ("kilometer Marker")
-            print("Interacting with toggle: kilometer Marker")
-            kilometer_wrapper = page.locator("div.toggle-field-wrapper").filter(has_text="kilometer Marker")
-            kilometer_toggle = kilometer_wrapper.locator("button[role='switch']")
-            
-            kilometer_toggle.wait_for(state="visible")
-            kilometer_toggle.dblclick()
-            print("kilometer Marker toggle success")
-            page.wait_for_timeout(500)
-
-
-            # 4. Merge Type Toggle
-            print("Interacting with toggle: Merge Type")
-            merge_type_wrapper = page.locator("div.toggle-field-wrapper").filter(has_text="Merge Type")
-            merge_type_toggle = merge_type_wrapper.locator("button[role='switch']")
-            
-            merge_type_toggle.wait_for(state="visible")
-            merge_type_toggle.dblclick()
-            print("Merge Type toggle success")
-            page.wait_for_timeout(500)
-
 
             # Finally, dismiss or save changes to reset state
             dismiss_btn = page.get_by_role("button", name="Dismiss Changes")
