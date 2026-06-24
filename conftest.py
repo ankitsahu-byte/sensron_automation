@@ -13,6 +13,7 @@ from pages.configuration_anomaly_page import AnomalyPage
 from pages.configuration_map_page import MapPage
 from pages.configuration_rbac_controllor import RbacPage
 from pages.configuration_logger_config_page import LoggerPage
+from pages.configuration_jetson_device_config_page import JetsonDevicePage
 
 
 config = Config()   
@@ -256,5 +257,28 @@ def logger_setup(browser):
     logger_pg.open_logger_config()
     
     yield logger_pg
+    
+    context.close()
+
+@pytest.fixture(scope='module')
+def jetson_setup(browser):
+    """Logs in, navigates to Configuration, opens Jetson Device tab, and yields the page object."""
+    context = browser.new_context()
+    page = context.new_page()
+    
+    login_pg = LoginPage(page)
+    nav_menu = NavigationMenu(page)
+    jetson_pg = JetsonDevicePage(page)
+    
+    # Login
+    login_pg.navigate(Config.BASE_URL)
+    login_pg.login(Config.EMAIL, Config.PASSWORD)
+    page.wait_for_url(lambda url: "dashboard" in url, timeout=10000)
+    
+    # Navigate to Configuration -> Jetson Device Config
+    nav_menu.go_to_configuration()
+    jetson_pg.open_jetson_config()
+    
+    yield jetson_pg
     
     context.close()

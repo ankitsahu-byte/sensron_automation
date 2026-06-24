@@ -162,3 +162,33 @@ class LoggerData:
     LOGGER_TOGGLES = [
         "logger status"
     ]
+
+class JetsonDeviceData:
+    REQUEST_TIMEOUT_DATA = [
+        ("100", False, "Value must be at least 1000"),   
+        ("999", False, "Value must be at least 1000"),   
+        ("1000", True, None),                          
+        ("60000", True, None),
+        ("10000", True, None),                          
+        ("60001", False, "Value must be between 1000 and 60000"),                        
+        ("-1", False, "The Minimum value is greater than 1000")  
+    ]
+
+    RETRY_DELAY_DATA = [
+        ("100", False, "Value must be at least 500"),   
+        ("499", False, "Value must be at least 500"),   
+        ("500", True, None),                          
+        ("10000", True, None),
+        ("1000", True, None),                          
+        ("10001", False, "Value must be between 500 and 10000"),                        
+        ("-1", False, "The Minimum value is greater than 500")  
+    ]
+
+    MAX_RETRY_ATTEMPTS_DATA = [
+        ("0", False, "The Minimum value is greater than 1"),   
+        ("1", True, None),   
+        ("10", True, None),                          
+        ("3", True, None),                          
+        ("11", False, "Value must be between 1 and 10"),                        
+        ("-1", False, "The Minimum value is greater than 1")  
+    ]

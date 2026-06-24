@@ -33,28 +33,29 @@ def run_tests():
         time.sleep(1)
 
         # Click the Anomaly link (Adapted for the new page)
-        page.get_by_role("radio", name="logger Config").click()
-        print("logger Config tab is clicked.")
+        page.get_by_role("radio", name="Jetson Device Config").click()
+        print("Jetson Device Config tab is clicked.")
         time.sleep(1)
         #----------------------------------------------------------
-        # Session Time (minutes)
-        SESSION_TIME_BVA_DATA = [
-          ("0", False, "The Minimum value is greater than 1"),   
-          ("1", True, None),                          
-          ("1440", True, None),                          
-          ("60", True, None),                        
-          ("1441", False, "Value must be between 1 and 1440"),  
-          ("-10", False, "The Minimum value is greater than 1"),  
+        # Request Timeout (ms)
+        REQUEST_TIMEOUT_DATA = [
+          ("100", False, "Value must be at least 1000"),   
+          ("999", False, "Value must be at least 1000"),   
+          ("1000", True, None),                          
+          ("60000", True, None),
+          ("10000",True, None),                          
+          ("60001", False, "Value must be between 1000 and 60000"),                        
+          ("-1", False, "The Minimum value is greater than 1000")  
         ]
-        for value, is_valid, expected_error in SESSION_TIME_BVA_DATA:
-            print(f"\n--- Testing Location offset boundary value: {value} ---")
+        for value, is_valid, expected_error in REQUEST_TIMEOUT_DATA:
+            print(f"\n--- Testing Request Timeout (ms) boundary value: {value} ---")
             
             edit_button = page.get_by_role("button", name="Edit")
             if edit_button.is_visible():
                 edit_button.click()
             
             # Using your wrapper strategy adapted for the Anomaly page
-            target_wrapper = page.locator("div.field-wrapper").filter(has_text="Session Time (minutes)")
+            target_wrapper = page.locator("div.field-wrapper").filter(has_text="Request Timeout (ms)")
             target_input = target_wrapper.locator("input[type='number'], input[type='text']")
             target_input.wait_for(state="visible")
             
@@ -84,31 +85,103 @@ def run_tests():
                 page.get_by_role("button", name="Dismiss Changes").click()
                 expect(edit_button).to_be_visible()
                 print(f"Passed: Invalid input '{value}' is rejected. Changes dismissed.")
-            #---------------------------------------------------------------------------------------
-             # Map Configuration Toggles (Explicit Definitions)
-            print("\n--- Testing Map Toggles ---")
-        
-        # Ensure we are in Edit mode before interacting with toggles
+#---------------------------------------------------------------------------------------
+        # Retry Delay (ms)
+        RETRY_DELAY_DATA = [
+          ("100", False, "Value must be at least 500"),   
+          ("499", False, "Value must be at least 500"),   
+          ("500", True, None),                          
+          ("10000", True, None),
+          ("1000",True, None),                          
+          ("10001", False, "Value must be between 500 and 10000"),                        
+          ("-1", False, "The Minimum value is greater than 500")  
+        ]
+        for value, is_valid, expected_error in RETRY_DELAY_DATA:
+            print(f"\n--- Testing Retry Delay (ms) boundary value: {value} ---")
+            
             edit_button = page.get_by_role("button", name="Edit")
             if edit_button.is_visible():
-              edit_button.click()
-            page.wait_for_timeout(500) # Brief pause for UI transition
-        
-        # 1. Enable Offline Map Toggle
-            print("Interacting with toggle: Session Time Out")
-            offline_wrapper = page.locator("div.toggle-field-wrapper").filter(has_text="Session Time Out")
-            offline_map_toggle = offline_wrapper.locator("button[role='switch']")
-        
-        # Ensure it's ready before clicking
-            offline_map_toggle.wait_for(state="visible")
-            offline_map_toggle.dblclick()
-            print("sucess")
-
-            # Finally, dismiss or save changes to reset state
-            dismiss_btn = page.get_by_role("button", name="Dismiss Changes")
-            if dismiss_btn.is_visible():
-                dismiss_btn.click()
-                print("All toggles tested and changes dismissed.")
+                edit_button.click()
+            
+            # Using your wrapper strategy adapted for the Anomaly page
+            target_wrapper = page.locator("div.field-wrapper").filter(has_text="Retry Delay (ms)")
+            target_input = target_wrapper.locator("input[type='number'], input[type='text']")
+            target_input.wait_for(state="visible")
+            
+            target_input.click()
+            target_input.clear()
+            
+            # NOTE: If you run into the "disabled" save button error again, 
+            # change .fill() to .press_sequentially(str(value), delay=50)
+            target_input.fill(str(value)) 
+            target_input.blur() 
+            
+            save_button = page.get_by_role("button", name="Save Changes")
+            
+            if is_valid:
+                print(f"Valid value '{value}' entered. Executing TRUE flow.")
+                expect(save_button).to_be_enabled()
+                save_button.click()
+                expect(edit_button).to_be_visible()
+                print(f"Passed: Valid input '{value}' is accepted. Saved successfully.")
+            else:
+                print(f"Invalid value '{value}' entered. Executing FALSE flow.")
+                # Check for error message
+                error_msg = page.locator("div.field-error-message").filter(has_text=expected_error)
+                expect(error_msg).to_be_visible()
+                print(f"Expected error caught: '{expected_error}'")
+                
+                page.get_by_role("button", name="Dismiss Changes").click()
+                expect(edit_button).to_be_visible()
+                print(f"Passed: Invalid input '{value}' is rejected. Changes dismissed.")
+#---------------------------------------------------------------------------------------
+        # Max Retry Attempts
+        MAX_RETRY_ATTEMPTS_DATA = [
+          ("0", False, "The Minimum value is greater than 1"),   
+          ("1", True, None),   
+          ("10", True, None),                          
+          ("3", True, None),                          
+          ("11", False, "Value must be between 1 and 10"),                        
+          ("-1", False, "The Minimum value is greater than 1")  
+        ]
+        for value, is_valid, expected_error in MAX_RETRY_ATTEMPTS_DATA:
+            print(f"\n--- Testing Max Retry Attempts boundary value: {value} ---")
+            
+            edit_button = page.get_by_role("button", name="Edit")
+            if edit_button.is_visible():
+                edit_button.click()
+            
+            # Using your wrapper strategy adapted for the Anomaly page
+            target_wrapper = page.locator("div.field-wrapper").filter(has_text="Max Retry Attempts")
+            target_input = target_wrapper.locator("input[type='number'], input[type='text']")
+            target_input.wait_for(state="visible")
+            
+            target_input.click()
+            target_input.clear()
+            
+            # NOTE: If you run into the "disabled" save button error again, 
+            # change .fill() to .press_sequentially(str(value), delay=50)
+            target_input.fill(str(value)) 
+            target_input.blur() 
+            
+            save_button = page.get_by_role("button", name="Save Changes")
+            
+            if is_valid:
+                print(f"Valid value '{value}' entered. Executing TRUE flow.")
+                expect(save_button).to_be_enabled()
+                save_button.click()
+                expect(edit_button).to_be_visible()
+                print(f"Passed: Valid input '{value}' is accepted. Saved successfully.")
+            else:
+                print(f"Invalid value '{value}' entered. Executing FALSE flow.")
+                # Check for error message
+                error_msg = page.locator("div.field-error-message").filter(has_text=expected_error)
+                expect(error_msg).to_be_visible()
+                print(f"Expected error caught: '{expected_error}'")
+                
+                page.get_by_role("button", name="Dismiss Changes").click()
+                expect(edit_button).to_be_visible()
+                print(f"Passed: Invalid input '{value}' is rejected. Changes dismissed.")
 
 
 if __name__ == "__main__":

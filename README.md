@@ -22,6 +22,7 @@ pytest tests/ui/test_configuration_anomaly_page.py -v -s
 pytest tests/ui/test_configuration_map_page.py -v -s
 pytest tests/ui/test_configuration_rabc_controllor.py -v -s
 pytest tests/ui/test_configuration_logger_config.py -v -s
+pytest tests/ui/test_configuration_jetson_device_config_page.py -v -s
 pytest tests/ui/test_das_interrogator_page.py --html=reports/html/das_interrogator_report.html -v -s
 
 For htmlReport creation
