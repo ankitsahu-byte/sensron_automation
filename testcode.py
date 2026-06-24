@@ -33,8 +33,8 @@ def run_tests():
         time.sleep(1)
 
         # Click the Anomaly link (Adapted for the new page)
-        page.get_by_role("radio", name="RBAC Control").click()
-        print("RBAC Control tab is clicked.")
+        page.get_by_role("radio", name="logger Config").click()
+        print("logger Config tab is clicked.")
         time.sleep(1)
         #----------------------------------------------------------
         # Session Time (minutes)

@@ -148,3 +148,17 @@ class RbacData:
     RBAC_TOGGLES = [
         "Session Time Out"
     ]
+    
+class LoggerData:
+    RETENTION_TIME_DATA = [
+        ("0", False, "The Minimum value is greater than 1"),   
+        ("1", True, None),                          
+        ("15", True, None),                          
+        ("30", True, None),                        
+        ("31", False, "Value must be between 1 and 30"),  
+        ("-1", False, "The Minimum value is greater than 1"),  
+    ]
+
+    LOGGER_TOGGLES = [
+        "logger status"
+    ]
