@@ -192,3 +192,6 @@ class JetsonDeviceData:
         ("11", False, "Value must be between 1 and 10"),                        
         ("-1", False, "The Minimum value is greater than 1")  
     ]
+
+class LogConfigData:
+    TABS_TO_TEST = ["DAS", "DAQ", "Alarm", "Anomaly"]
