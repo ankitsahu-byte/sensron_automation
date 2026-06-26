@@ -1,7 +1,6 @@
 import pytest
 from playwright.sync_api import Page, sync_playwright, expect
 import time
-import os
 
 BASE_URL = "http://10.101.54.90:4200/home/dashboard"
 EMAIL = "ankit.sahu@stltech.in"
@@ -9,18 +8,13 @@ PASSWORD = "#Ankit@1234"
 
 def get_input_locator(page: Page, visible_label_text: str):
     """Helper function to locate input fields robustly using field wrappers."""
+    # Playwright's has_text does partial matching, so passing "SBC Setpoint" 
+    # will successfully match "SBC Setpoint (°C) *"
     wrapper = page.locator("div.field-wrapper").filter(has_text=visible_label_text)
-    return wrapper.locator("input[type='number'], input[type='text']")
+    # Added input[type='time'] just in case the developers used native time inputs
+    return wrapper.locator("input[type='number'], input[type='text'], input[type='time']")
 
 def run_tests():
-    # --- SETUP ARTIFACT FOLDER ---
-    # Define the path for the artifact folder in the current working directory
-    artifact_dir = os.path.join(os.getcwd(), "artifact")
-    
-    # Create the folder if it does not exist (exist_ok=True prevents errors if it's already there)
-    os.makedirs(artifact_dir, exist_ok=True)
-    print(f"Artifact folder ready at: {artifact_dir}")
-
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=False)
         context = browser.new_context()
@@ -35,82 +29,72 @@ def run_tests():
         # Submit form
         page.get_by_role("button", name="Sign In").click()
 
-        # Check login is successful
+        # Check login is successful by waiting for the dashboard URL
         page.wait_for_url(lambda url: "dashboard" in url, timeout=5000)
-        assert "dashboard" in page.url, "Failed: Expected to be on dashboard, but URL is incorrect."
-        print("Login successful.")
+        assert "dashboard" in page.url, "Failed: Expected to be on dashboard."
+        print("Login successful and on the correct page.")
         
         # Click the configuration link
         page.get_by_role("link", name="Configuration").click()
+        print("Configuration link is clicked.")
         time.sleep(1)
 
-        # Click the Log Configuration link
-        page.get_by_role("radio", name="Log Configuration").click()
+        # Click the Temp Monitoring link
+        page.get_by_role("radio", name="Temp Monitoring").click()
+        print("Temp Monitoring tab is clicked.")
         time.sleep(1)
-
-        # Define the tabs we want to iterate through
-        tabs = ["DAS", "DAQ", "Alarm", "Anomaly"]
-
-        for tab in tabs:
-            print(f"\n--- Processing Tab: {tab} ---")
-            
-            # 1. Click the specific tab
-            if tab == "Anomaly":
-                tab_locator = page.get_by_label("Log Config Tabs").get_by_role("radio", name=tab)
-            else:
-                tab_locator = page.get_by_role("radio", name=tab, exact=True)
-            
-            tab_locator.click()
-            expect(tab_locator).to_be_visible()
-            print(f"{tab} Config tab is clicked.")
-            time.sleep(1) 
-
-            # --- 2. VALIDATE EDIT FUNCTIONALITY ---
-            print(f"[{tab}] Validating Edit button...")
-            
-            # Use the new robust locator strategy
-            file_size_input = get_input_locator(page, "File Size")
-            duration_input = get_input_locator(page, "Duration Count")
-            
-            # Ensure fields are locked before clicking edit
-            expect(file_size_input).to_be_hidden()
-            expect(duration_input).to_be_hidden()
-
-            
-            # Click the Edit button
-            page.get_by_role("button", name="Edit").click()
-            time.sleep(0.5)
-            
-            # Ensure fields are now unlocked and editable
-            expect(file_size_input).to_be_enabled()
-            expect(duration_input).to_be_enabled()
-            print(f"[{tab}] Edit validation passed! Fields are now editable.")
-            page.get_by_role("button", name="Dismiss Changes").click()
-            time.sleep(1)
-
-            # --- 3. VALIDATE DOWNLOAD FUNCTIONALITY ---
-            print(f"[{tab}] Validating Download...")
-            with page.expect_download() as download_info:
-                page.get_by_role("button", name="Download").click()
-                
-            download = download_info.value
-            file_name = download.suggested_filename
-            print(f"[{tab}] Download triggered. Suggested filename: {file_name}")
-            
-            assert file_name is not None, f"Failed: No filename suggested for {tab}."
-            
-            # --- SAVE TO ARTIFACT FOLDER ---
-            # Update the download path to use the artifact_dir created earlier
-            download_path = os.path.join(artifact_dir, f"{tab}_{file_name}")
-            download.save_as(download_path)
-            
-            assert os.path.exists(download_path), f"Failed: File not found at {download_path}."
-            file_size = os.path.getsize(download_path)
-            assert file_size > 0, f"Failed: Downloaded file for {tab} is empty (0 bytes)."
-            
-            print(f"[{tab}] Download validated successfully! Saved to: {download_path}")
         
-        print("\nAll tabs processed successfully.")
+        # ----------------------------------------------------------
+        # Define a list of all 8 fields you want to test
+        fields_to_test = [
+            "Chassis Sample Frequency",
+            "Jetson Sample Frequency",
+            "SBC Sample Frequency",
+            "DAS Sample Frequency",
+            "SBC Setpoint",
+            "Jetson Setpoint",
+            "DAS Setpoint",
+            "Chassis Setpoint"
+        ]
+
+        # Loop through each field one by one
+        for field_name in fields_to_test:
+            print(f"\n--- Testing Field: {field_name} ---")
+            Edit_button = page.get_by_role("button", name="Edit")
+            if Edit_button.is_visible():
+                Edit_button.click()
+            # 1. Locate the input
+            target_input = get_input_locator(page, field_name)
+            target_input.wait_for(state="visible")
+            
+            # 2. Get the existing data
+            original_value = target_input.input_value()
+            print(f"Original Value: {original_value}")
+            
+            # 3. Clear the input
+            target_input.click()
+            target_input.clear()
+            print("Cleared Input Successfully")
+            
+            # 4. Fill the existing data back in
+            target_input.fill(original_value)
+            print(f"Original value '{original_value}' entered back")
+            
+            # 5. Handle the buttons
+            # Note: Because you cleared and typed the exact same value back, the UI might 
+            # realize nothing actually changed and keep the Save/Dismiss buttons disabled. 
+            # This 'if' statement prevents the script from crashing if they are disabled.
+            dismiss_button = page.get_by_role("button", name="Dismiss Changes")
+            if dismiss_button.is_enabled():
+                dismiss_button.click()
+                print("Clicked 'Dismiss Changes' successfully")
+            else:
+                print("Buttons remained disabled (expected because value didn't change)")
+
+            print(f"Test Passed successfully for {field_name}")
+            time.sleep(1) # Brief pause before moving to the next field
+
+        print("\nAll fields processed successfully!")
         time.sleep(2)
         browser.close()
 

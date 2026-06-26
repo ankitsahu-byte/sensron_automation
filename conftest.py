@@ -16,6 +16,8 @@ from pages.configuration_rbac_controllor import RbacPage
 from pages.configuration_logger_config_page import LoggerPage
 from pages.configuration_jetson_device_config_page import JetsonDevicePage
 from pages.configuration_log_config_page import LogConfigPage
+from pages.configuration_temp_monitering_page import TempMonitoringPage
+
 
 config = Config()   
 @pytest.fixture
@@ -311,5 +313,28 @@ def log_config_setup(browser):
     log_pg.open_log_config()
     
     yield log_pg
+    
+    context.close()
+
+@pytest.fixture(scope='module')
+def temp_monitoring_setup(browser):
+    """Logs in, navigates to Configuration, opens Temp Monitoring tab, and yields the page object."""
+    context = browser.new_context()
+    page = context.new_page()
+    
+    login_pg = LoginPage(page)
+    nav_menu = NavigationMenu(page)
+    temp_pg = TempMonitoringPage(page)
+    
+    # Login
+    login_pg.navigate(Config.BASE_URL)
+    login_pg.login(Config.EMAIL, Config.PASSWORD)
+    page.wait_for_url(lambda url: "dashboard" in url, timeout=10000)
+    
+    # Navigate to Configuration -> Temp Monitoring
+    nav_menu.go_to_configuration()
+    temp_pg.open_temp_monitoring()
+    
+    yield temp_pg
     
     context.close()

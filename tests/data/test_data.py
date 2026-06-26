@@ -195,3 +195,15 @@ class JetsonDeviceData:
 
 class LogConfigData:
     TABS_TO_TEST = ["DAS", "DAQ", "Alarm", "Anomaly"]
+
+class TempMonitoringData:
+    FIELDS_TO_TEST = [
+        "Chassis Sample Frequency",
+        "Jetson Sample Frequency",
+        "SBC Sample Frequency",
+        "DAS Sample Frequency",
+        "SBC Setpoint",
+        "Jetson Setpoint",
+        "DAS Setpoint",
+        "Chassis Setpoint"
+    ]
